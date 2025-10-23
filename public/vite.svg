@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img"
+  aria-labelledby="title desc">
+  <title id="title">汐</title>
+  <desc id="desc">今汐风格的简洁汐字图标</desc>
+
+  <defs>
+    <!-- 珍珠径向渐变 -->
+    <radialGradient id="gPearl" cx="40%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+      <stop offset="35%" stop-color="#DFFDF9" stop-opacity="0.98" />
+      <stop offset="100%" stop-color="#7FE7D6" stop-opacity="0.98" />
+    </radialGradient>
+
+    <!-- 细微投影 -->
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- 背景圆（透明背景下有轻描边，便于在各种背景上展示） -->
+  <circle cx="32" cy="32" r="30" fill="#000" stroke="#000" stroke-width="1.5" />
+
+  <!-- 中心汐字（使用常见中文无衬线字体作 fallback） -->
+  <g filter="url(#soft)">
+    <text x="32" y="37"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Noto Sans SC, PingFang SC, -apple-system, 'Segoe UI', Roboto, 'Hiragino Sans GB', sans-serif"
+      font-weight="700"
+      font-size="38"
+      letter-spacing="0.5"
+      style="fill: url(#gPearl); stroke: rgba(3,30,28,0.82); stroke-width:1.2; paint-order: stroke fill;">
+      汐
+    </text>
+  </g>
+</svg>
