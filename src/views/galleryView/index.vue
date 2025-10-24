@@ -9,9 +9,20 @@
         </button>
       </div>
       <div class="gallery-grid">
-        <div v-for="(img, index) in images" :key="img.id" class="card" @click="openLightbox(index)" ref="cards">
+        <div
+          v-for="(img, index) in images"
+          :key="img.id"
+          class="card"
+          @click="openLightbox(index)"
+          ref="cards"
+        >
           <div class="card-inner">
-            <img :src="img.src" :alt="img.alt" loading="lazy" @load="onImageLoad($event)" />
+            <img
+              :src="img.src"
+              :alt="img.alt"
+              loading="lazy"
+              @load="onImageLoad($event)"
+            />
             <div class="overlay">
               <span>查看大图</span>
             </div>
@@ -36,7 +47,12 @@
       </div>
       <transition name="fade">
         <ul v-if="expanded" class="ranking-list">
-          <li v-for="(item, idx) in rankingList" :key="idx" class="ranking-item" :class="`rank-${idx + 1}`">
+          <li
+            v-for="(item, idx) in rankingList"
+            :key="idx"
+            class="ranking-item"
+            :class="`rank-${idx + 1}`"
+          >
             <span class="rank">{{ idx + 1 }}</span>
             <span class="name">{{ item.nickname }}</span>
             <span class="count">{{ item.count }} 张</span>
@@ -53,12 +69,19 @@
     </div>
 
     <!-- 上传弹窗 -->
-    <div v-if="uploadModalOpen" class="upload-modal-overlay" @click.self="closeUploadModal">
+    <div
+      v-if="uploadModalOpen"
+      class="upload-modal-overlay"
+      @click.self="closeUploadModal"
+    >
       <div class="upload-modal">
         <h3>批量上传图片</h3>
         <div class="tip-container">
           <ul class="tips-list">
-            <li>审核规则： 1.不要色情倾向（不要露三点，我怕被封） 2.要我能认出是今汐。</li>
+            <li>
+              审核规则： 1.不要色情倾向（不要露三点，我怕被封）
+              2.要我能认出是今汐。
+            </li>
             <li>
               由于没有用户系统，我这边不好做审核反馈，但只要显示上传成功，我这边肯定能收到。
             </li>
@@ -80,7 +103,13 @@
         </label>
         <label>
           选择图片（最多 {{ remaining }} 张）：
-          <input ref="fileInput" type="file" multiple accept="image/*" @change="handleFileSelect" />
+          <input
+            ref="fileInput"
+            type="file"
+            multiple
+            accept="image/*"
+            @change="handleFileSelect"
+          />
         </label>
         <p class="tip" v-if="selectedFiles.length">
           已选 {{ selectedFiles.length }} 张
@@ -94,10 +123,7 @@
       </div>
     </div>
 
-    <div class="floating-chibis">
-      <img v-for="(pet, i) in chibiList" :key="i" :src="pet.src" :style="{ top: pet.top + 'px', left: pet.left + 'px' }"
-        class="chibi-img" />
-    </div>
+
   </div>
 </template>
 
@@ -105,7 +131,6 @@
 import { ref, onMounted, computed, nextTick, onBeforeUnmount } from "vue";
 import { uploadImages } from "@/api/modules/images"; // 前面封装的上传接口
 import { getRankingList } from "@/api/modules/ranking"; // 根据你的实际路径调整
-import { gsap } from "gsap"; // ← 本地引入
 import { getImagesLikesList, likeImage } from "@/api/modules/imagesLikes";
 import { debounce } from "lodash";
 
@@ -175,7 +200,7 @@ const page = 1;
 const pageSize = 99;
 
 const fetchRanking = async () => {
-  const res = await getRankingList({ page, pageSize, character_key: "jinXi" });
+  const res = await getRankingList({ page, pageSize, character_key: "jiaBei" });
   if (res.success) {
     rankingList.value = res.data;
   } else {
@@ -222,7 +247,7 @@ async function loadNextPage() {
       page: pageImage.value,
       limit: limit.value,
       sortBy: sortBy.value,
-      character_key: "jinXi",
+      character_key: "jiaBei",
       order: order.value,
     });
     imgTotal.value = res.total;
@@ -384,7 +409,7 @@ async function submitUpload() {
     const res = await uploadImages(
       selectedFiles.value,
       nickname.value.trim(),
-      "jinXi"
+      "jiaBei"
     );
     const uploadedCount = res.data.length;
     // 更新 localStorage
@@ -430,107 +455,6 @@ onMounted(async () => {
   if (sentinel.value) {
     sentinelObserver.observe(sentinel.value);
   }
-  // 1. 基础配置信息
-  const total = 9;
-  let pickCount = 3; // 每次抽取 3 张
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const isMobile = window.innerWidth <= 768;
-  // 如果已知单张小人图片的宽高，可避免超出边界；
-  // 假设小人图片宽 100px、高 100px，按需替换：
-  const imgWidth = 100;
-  const imgHeight = 100;
-
-  // 2. Fisher–Yates 洗牌函数
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  // 3. 随机选出 3 个编号
-  if (isMobile) {
-    pickCount = 1;
-  }
-  const nums = shuffle(Array.from({ length: total }, (_, k) => k + 1));
-  const picks = nums.slice(0, pickCount);
-
-  // 4. 生成随机位置并填充 chibiList
-  chibiList.value = []; // 先清空
-  picks.forEach((i) => {
-    chibiList.value.push({
-      src: `/QImages/1 (${i}).png`,
-      left: Math.random() * (vw - imgWidth), // 保证不超出左右边界
-      top: Math.random() * (vh - imgHeight), // 保证不超出上下边界
-    });
-  });
-
-  // 2. 等 img 渲染到 DOM
-  await nextTick();
-
-  // 3. 给每个小人绑定 GSAP 动画
-  const imgs = document.querySelectorAll<HTMLImageElement>(".chibi-img");
-  imgs.forEach((img, index) => {
-    const padding = 200; // 边缘预留空间
-    // ✅ 初始出场动画（闪现）
-    gsap.fromTo(
-      img,
-      { opacity: 0, scale: 0.5 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "back.out(2)",
-        delay: 0.2 * index,
-      }
-    );
-
-    // ✅ 鼠标靠近闪避
-    img.addEventListener("mouseenter", () => {
-      gsap.killTweensOf(img);
-
-      gsap.to(img, {
-        x: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
-        y: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
-        duration: 1.2,
-        ease: "back.out(2)",
-        onComplete: () => {
-          // 闪避完成后，再重新启用动画
-          animate(img);
-        },
-      });
-    });
-
-    const animate = (img: HTMLImageElement) => {
-      let { x, y } = img.getBoundingClientRect();
-      let deltaX = (Math.random() - 0.5) * 200;
-      let deltaY = (Math.random() - 0.5) * 200;
-
-      // 预测一下偏移后的位置
-      let nextX = x + deltaX;
-      let nextY = y + deltaY;
-
-      // 校正：防漂出左、右、上、下边界
-      if (nextX < padding) deltaX = padding - x;
-      if (nextX + img.width > window.innerWidth - padding)
-        deltaX = window.innerWidth - padding - (x + img.width);
-      if (nextY < padding) deltaY = padding - y;
-      if (nextY + img.height > window.innerHeight - padding)
-        deltaY = window.innerHeight - padding - (y + img.height);
-
-      gsap.to(img, {
-        x: `+=${deltaX.toFixed(0)}`,
-        y: `+=${deltaY.toFixed(0)}`,
-        rotation: `+=${((Math.random() - 0.5) * 60).toFixed(0)}`,
-        duration: 2 + Math.random() * 2,
-        ease: "power1.inOut",
-        onComplete: () => animate(img),
-      });
-    };
-    animate(img);
-  });
 });
 
 onBeforeUnmount(() => {
@@ -558,22 +482,7 @@ $text: #fde8e8;
   }
 }
 
-.floating-chibis {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
 
-.chibi-img {
-  position: absolute;
-  width: 80px;
-  user-select: none;
-  transform-origin: center center;
-  pointer-events: auto;
-  position: absolute;
-  z-index: 10;
-}
 
 .gallery-container {
   background: radial-gradient(circle at center, #111 0%, $bg 100%);
@@ -602,25 +511,24 @@ $text: #fde8e8;
         border-radius: 28px;
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(127, 231, 214, 0.03);
 
-        /* 今汐：暗匣底 + 珍珠薄雾纹理（写死色值） */
-        background: linear-gradient(90deg,
-            rgba(6, 18, 16, 0.82) 0%,
-            rgba(8, 22, 20, 0.92) 50%,
-            rgba(6, 16, 14, 0.96) 100%);
-        color: #DFFDF9;
-        /* 珍珠青文本 */
-        box-shadow:
-          0 10px 28px rgba(3, 10, 10, 0.56),
-          inset 0 1px 0 rgba(127, 231, 214, 0.01);
+        /* 背景：冰蓝为主，尾部有柔和炽橙点缀（蓝占比更高） */
+        background: linear-gradient(
+          90deg,
+          #3c9eff 0%,
+          #7ecbff 48%,
+          #ff9a4c 92%
+        );
+        color: #042826; /* 深色文字确保对比 */
+        box-shadow: 0 10px 28px rgba(2, 8, 12, 0.56),
+          0 0 28px rgba(60, 150, 210, 0.06), 0 0 16px rgba(255, 154, 76, 0.03);
         transition: transform 200ms cubic-bezier(0.2, 0.9, 0.25, 1),
-          box-shadow 200ms ease, background 260ms ease,
-          color 160ms ease, filter 200ms ease;
+          box-shadow 200ms ease, background 260ms ease, color 160ms ease,
+          filter 200ms ease;
         -webkit-tap-highlight-color: transparent;
         will-change: transform, box-shadow, filter;
 
-        /* 左侧徽记 —— 今汐版：小珍珠/波纹徽记（冷色）*/
+        /* 左侧徽记：改为蓝→橙微渐变徽记，更符合嘉贝莉娜 */
         &::after {
           content: "";
           position: absolute;
@@ -630,19 +538,32 @@ $text: #fde8e8;
           width: 18px;
           height: 22px;
           border-radius: 4px;
-          /* 珍珠到薄雾海绿的微渐变，作为小徽记 */
-          background: linear-gradient(180deg,
-              #DFFDF9 0%,
-              #7FE7D6 70%);
-          box-shadow: 0 6px 18px rgba(34, 92, 86, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-          /* 保留类似纹章形状 */
-          clip-path: polygon(50% 0, 78% 25%, 100% 45%, 50% 100%, 0% 45%, 22% 25%);
+          /* 徽记渐变由冰蓝到柔橙，透明度略降，避免过于抢眼 */
+          background: linear-gradient(
+            180deg,
+            #7ecbff 0%,
+            #3c9eff 50%,
+            rgba(255, 154, 76, 0.9) 95%
+          );
+          box-shadow: 0 6px 18px rgba(16, 56, 72, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.03);
+          clip-path: polygon(
+            50% 0,
+            78% 25%,
+            100% 45%,
+            50% 100%,
+            0% 45%,
+            22% 25%
+          );
           pointer-events: none;
           z-index: 3;
-          transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
+          transition: transform 220ms ease, opacity 220ms ease,
+            box-shadow 220ms ease, filter 220ms ease;
+          opacity: 0.98;
+          filter: saturate(1.02);
         }
 
-        /* 左侧微光环（今汐微珍珠光） */
+        /* 左侧微光环：蓝为主，外圈带极淡橙晕 */
         &::before {
           content: "";
           position: absolute;
@@ -652,52 +573,66 @@ $text: #fde8e8;
           width: 44px;
           height: 44px;
           border-radius: 50%;
-          background: radial-gradient(circle at 35% 35%, rgba(127, 231, 214, 0.06), transparent 45%);
+          background: radial-gradient(
+            circle at 35% 35%,
+            rgba(60, 150, 210, 0.12),
+            rgba(255, 154, 76, 0.02) 60%,
+            transparent 80%
+          );
           filter: blur(6px);
           pointer-events: none;
-          opacity: 0.9;
+          opacity: 0.95;
           z-index: 1;
+          transition: opacity 220ms ease, transform 220ms ease;
         }
 
-        /* hover：暗底微变，徽记放大且发出珍珠微光 */
+        /* hover：微抬起，蓝光增强，橙色晕光显现 */
         &:hover {
           transform: translateY(-5px) scale(1.02);
-          box-shadow:
-            0 22px 66px rgba(3, 10, 10, 0.66),
-            0 0 44px rgba(127, 231, 214, 0.10);
-          filter: saturate(1.04) brightness(1.02);
-          color: #7FE7D6;
-          /* hover 文本偏薄雾海绿 */
-          background: linear-gradient(90deg,
-              rgba(6, 18, 16, 0.88) 0%,
-              rgba(8, 22, 20, 0.94) 50%,
-              rgba(6, 16, 14, 0.98) 100%);
+          box-shadow: 0 22px 66px rgba(2, 8, 12, 0.68),
+            0 0 88px rgba(60, 150, 210, 0.12), 0 0 52px rgba(255, 154, 76, 0.06);
+          filter: saturate(1.06) brightness(1.02);
+          color: #042826;
+          background: linear-gradient(
+            90deg,
+            #3a98ff 0%,
+            #7ecbff 44%,
+            #ffb678 92%
+          );
         }
 
         &:hover::after {
-          transform: translateY(-56%) rotate(-6deg) scale(1.12);
-          box-shadow: 0 10px 30px rgba(127, 231, 214, 0.14), inset 0 2px 6px rgba(255, 255, 255, 0.06);
+          transform: translateY(-56%) rotate(-6deg) scale(1.14);
+          box-shadow: 0 12px 30px rgba(60, 150, 210, 0.14),
+            inset 0 2px 6px rgba(255, 255, 255, 0.06),
+            0 0 18px rgba(255, 154, 76, 0.04);
           opacity: 1;
+          filter: blur(0.2px) saturate(1.05);
+        }
+
+        &:hover::before {
+          transform: translateY(-50%) scale(1.06);
+          opacity: 1;
+          filter: blur(6px) saturate(1.06);
         }
 
         /* active（按下）反馈：更内敛 */
         &:active {
-          transform: translateY(-2px) scale(0.995);
-          box-shadow:
-            0 10px 28px rgba(3, 10, 10, 0.5),
-            0 0 20px rgba(127, 231, 214, 0.06);
+          transform: translateY(-2px) scale(0.997);
+          box-shadow: 0 10px 28px rgba(2, 8, 12, 0.5),
+            0 0 28px rgba(60, 150, 210, 0.06);
+          filter: saturate(1.02);
         }
 
-        /* keyboard focus 可见环（无障碍） */
+        /* keyboard focus 可见环（无障碍）*/
         &:focus-visible {
           outline: none;
-          box-shadow:
-            0 22px 66px rgba(3, 10, 10, 0.66),
-            0 0 0 6px rgba(127, 231, 214, 0.06);
+          box-shadow: 0 22px 66px rgba(2, 8, 12, 0.68),
+            0 0 0 6px rgba(60, 150, 210, 0.07),
+            0 0 36px rgba(255, 154, 76, 0.03);
         }
       }
     }
-
 
     .gallery-grid {
       display: grid;
@@ -714,7 +649,6 @@ $text: #fde8e8;
         }
 
         &.loaded {
-
           // Blur-up & grayscale removed
           .card-inner img {
             filter: none;
@@ -915,37 +849,50 @@ $text: #fde8e8;
     cursor: pointer;
     user-select: none;
 
-    color: #043832;
-    background: linear-gradient(90deg,
-        rgba(127, 231, 214, 0.98) 0%,
-        rgba(223, 253, 249, 0.98) 60%);
+    /* 文字与渐变：冰蓝 -> 柔和炽橙（蓝为主，橙为尾）*/
+    color: #042826; /* 深色文字保证对比 */
+    background: linear-gradient(90deg, #3c9eff 0%, #7ecbff 40%, #ff9a4c 85%);
     border-radius: 28px;
 
+    /* 玻璃 + 冷蓝底光 + 极淡橙色点缀 */
     backdrop-filter: blur(6px) saturate(120%);
     -webkit-backdrop-filter: blur(6px) saturate(120%);
-
-
-    box-shadow:
-      0 14px 36px rgba(4, 12, 10, 0.44),
-      0 0 28px rgba(127, 231, 214, 0.08);
-    ;
-
+    box-shadow: 0 14px 36px rgba(2, 8, 10, 0.44),
+      /* 主投影（冷） */ 0 0 28px rgba(60, 150, 210, 0.08),
+      /* 冷蓝氛围光 */ 0 0 36px rgba(255, 154, 76, 0.03)
+        /* 极淡暖色晕光作点缀 */;
 
     overflow: visible;
     transition: transform 220ms cubic-bezier(0.2, 0.9, 0.25, 1),
-      box-shadow 220ms ease, background 260ms ease, filter 220ms ease;
+      box-shadow 220ms ease, background 260ms ease, filter 220ms ease,
+      opacity 160ms ease;
 
-    /* hover：微抬起、光晕增强 */
+    /* hover：微抬起、蓝光增强、橙色晕光略显 */
     &:hover {
       transform: translateY(-6px) scale(1.02);
-      box-shadow:
-        0 26px 68px rgba(4, 12, 10, 0.52),
-        0 0 56px rgba(127, 231, 214, 0.12);
-      filter: brightness(1.02) saturate(1.03);
+      box-shadow: 0 26px 68px rgba(2, 8, 10, 0.52),
+        0 0 72px rgba(60, 150, 210, 0.12), 0 0 44px rgba(255, 154, 76, 0.06);
+      filter: brightness(1.03) saturate(1.05);
+    }
+
+    /* keyboard focus 可见性（无障碍） */
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 28px 86px rgba(2, 8, 10, 0.56),
+        0 0 96px rgba(60, 150, 210, 0.12), 0 0 58px rgba(255, 154, 76, 0.06);
+      transform: translateY(-6px) scale(1.02);
+      border: 1px solid rgba(60, 150, 210, 0.08);
+    }
+
+    /* active（按下）手感）*/
+    &:active {
+      transform: translateY(-2px) scale(0.995);
+      box-shadow: 0 12px 36px rgba(2, 8, 10, 0.46),
+        0 0 28px rgba(60, 150, 210, 0.06);
     }
   }
 
-  /* 遮罩层：深海薄雾 + 珍珠微光（颜色写死） */
+  /* 嘉贝莉娜（颜色写死版）——遮罩层 & 模态（蓝 → 柔橙点缀） */
   .upload-modal-overlay {
     position: fixed;
     inset: 0;
@@ -954,31 +901,39 @@ $text: #fde8e8;
     align-items: center;
     justify-content: center;
 
-    /* 今汐风遮罩：深海绿 -> 深潮色 */
-    background: linear-gradient(180deg,
-        rgba(4, 23, 22, 0.86),
-        rgba(5, 20, 20, 0.78));
+    /* 遮罩（写死色值） */
+    background: linear-gradient(
+      180deg,
+      rgba(6, 10, 16, 0.86),
+      rgba(8, 14, 16, 0.78)
+    );
 
-    /* 轻微模糊以保留底下内容感知 */
     backdrop-filter: blur(10px) saturate(1.05);
     -webkit-backdrop-filter: blur(10px) saturate(1.05);
 
-    /* 顶层珍珠光斑（低饱和、不抢眼）*/
+    /* 顶层柔和光斑（蓝为主，含极淡橙点缀） */
     &::after {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background:
-        radial-gradient(700px 260px at 50% 28%,
-          rgba(127, 231, 214, 0.06),
-          transparent 14%),
+      background: radial-gradient(
+          700px 260px at 50% 28%,
+          rgba(60, 150, 210, 0.06),
+          transparent 14%
+        ),
+        radial-gradient(
+          420px 140px at 20% 70%,
+          rgba(255, 154, 76, 0.02),
+          transparent 20%
+        ),
         linear-gradient(180deg, rgba(0, 0, 0, 0.22), transparent 40%);
       mix-blend-mode: screen;
+      opacity: 0.98;
     }
   }
 
-  /* 模态主体：今汐风的暗匣 + 珍珠边缘 */
+  /* 模态主体（写死色值） */
   .upload-modal {
     position: relative;
     width: 720px;
@@ -987,31 +942,35 @@ $text: #fde8e8;
     border-radius: 16px;
     overflow: hidden;
     z-index: 2100;
-    color: #EAF9F8;
-    /* 珍珠浅色文字 */
+    color: #e6eef3;
     font-family: "Helvetica Neue", "Noto Sans SC", "PingFang SC", sans-serif;
     -webkit-font-smoothing: antialiased;
 
-    /* 背景：深海玻璃感（写死色值） */
-    background: linear-gradient(180deg,
-        rgba(6, 20, 18, 0.94),
-        rgba(8, 18, 16, 0.92));
-    border: 1px solid rgba(127, 231, 214, 0.03);
+    /* 背景：深海玻璃感（写死） */
+    background: linear-gradient(
+      180deg,
+      rgba(8, 18, 18, 0.94),
+      rgba(10, 18, 16, 0.92)
+    );
+    border: 1px solid rgba(60, 150, 210, 0.03);
     backdrop-filter: blur(6px) saturate(1.02);
     -webkit-backdrop-filter: blur(6px) saturate(1.02);
-    box-shadow: 0 30px 90px rgba(3, 8, 8, 0.78), inset 0 1px 0 rgba(127, 231, 214, 0.02);
+    box-shadow: 0 30px 90px rgba(3, 8, 8, 0.78),
+      inset 0 1px 0 rgba(60, 150, 210, 0.02);
 
-    /* 珍珠微光边缘（伪元素） */
+    /* 珍珠微光边缘：蓝主、尾部含极淡橙 */
     &::before {
       content: "";
       position: absolute;
       inset: -2px;
       border-radius: 18px;
       pointer-events: none;
-      background: linear-gradient(90deg,
-          rgba(127, 231, 214, 0.04),
-          rgba(223, 253, 249, 0.02),
-          rgba(127, 231, 214, 0.03));
+      background: linear-gradient(
+        90deg,
+        rgba(60, 150, 210, 0.045),
+        rgba(126, 203, 255, 0.02) 40%,
+        rgba(255, 154, 76, 0.02) 85%
+      );
       filter: blur(12px);
       mix-blend-mode: screen;
       opacity: 0.95;
@@ -1020,37 +979,38 @@ $text: #fde8e8;
     h3 {
       margin: 0 0 16px 0;
       font-size: 1.5rem;
-      color: #DFFDF9;
-      /* 珍珠青标题 */
+      /* 标题偏冷蓝，略带强度 */
+      color: rgba(60, 158, 255, 0.95);
       font-weight: 900;
       text-align: center;
       letter-spacing: 0.6px;
-      text-shadow: 0 6px 20px rgba(6, 48, 44, 0.06);
+      text-shadow: 0 6px 20px rgba(8, 30, 46, 0.06);
     }
 
     .stats {
       margin: 18px 0;
       font-size: 1rem;
       text-align: center;
-      color: rgba(234, 249, 248, 0.94);
+      color: rgba(230, 238, 243, 0.96);
 
       strong {
-        color: #7FE7D6;
-        /* 薄雾海绿强调 */
+        color: #3c9eff;
       }
     }
 
-    /* tip 区块：匣中深色 + 左侧珍珠强调线 */
+    /* tip 区块 */
     .tip-container {
       margin-top: 18px;
       padding: 14px 18px;
-      background: linear-gradient(180deg,
-          rgba(8, 18, 16, 0.60),
-          rgba(6, 14, 12, 0.56));
-      border-left: 4px solid rgba(127, 231, 214, 0.12);
+      background: linear-gradient(
+        180deg,
+        rgba(8, 18, 16, 0.6),
+        rgba(6, 14, 12, 0.56)
+      );
+      border-left: 4px solid rgba(60, 150, 210, 0.12);
       border-radius: 10px;
       backdrop-filter: blur(4px);
-      color: rgba(234, 249, 248, 0.94);
+      color: rgba(230, 245, 248, 0.94);
 
       .tips-list {
         list-style: none;
@@ -1062,7 +1022,7 @@ $text: #fde8e8;
           padding-left: 34px;
           margin-bottom: 10px;
           font-size: 0.95rem;
-          color: rgba(230, 249, 246, 0.94);
+          color: rgba(230, 245, 248, 0.94);
 
           &::before {
             content: "";
@@ -1072,13 +1032,15 @@ $text: #fde8e8;
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            /* 珍珠小徽记（今汐色写死） */
-            background: radial-gradient(circle at 30% 30%,
-                #DFFDF9 0%,
-                rgba(127, 231, 214, 0.88) 20%,
-                #7FE7D6 60%,
-                #4ed6c6 100%);
-            box-shadow: 0 6px 18px rgba(34, 92, 86, 0.06);
+            /* 小徽记：蓝为主、中央带极淡橙心 */
+            background: radial-gradient(
+              circle at 30% 30%,
+              rgba(126, 203, 255, 0.95) 0%,
+              rgba(60, 150, 210, 0.9) 25%,
+              rgba(255, 154, 76, 0.06) 70%,
+              rgba(255, 154, 76, 0.02) 100%
+            );
+            box-shadow: 0 6px 18px rgba(18, 50, 62, 0.06);
           }
 
           &:last-child {
@@ -1092,15 +1054,15 @@ $text: #fde8e8;
       margin-top: 10px;
       text-align: right;
       font-size: 0.9rem;
-      color: rgba(230, 249, 246, 0.86);
+      color: rgba(230, 245, 248, 0.86);
     }
 
-    /* 表单控件：深色输入框 + 聚焦时珍珠高光 */
+    /* 表单控件（写死焦点色） */
     label {
       display: block;
       margin-bottom: 18px;
       font-size: 0.95rem;
-      color: rgba(230, 249, 246, 0.96);
+      color: rgba(230, 245, 248, 0.96);
 
       input[type="text"],
       input[type="file"],
@@ -1109,14 +1071,17 @@ $text: #fde8e8;
         margin-top: 8px;
         padding: 12px 14px;
         border-radius: 10px;
-        border: 1px solid rgba(127, 231, 214, 0.03);
-        background: linear-gradient(180deg,
-            rgba(10, 16, 14, 0.6),
-            rgba(8, 14, 12, 0.64));
+        border: 1px solid rgba(60, 150, 210, 0.03);
+        background: linear-gradient(
+          180deg,
+          rgba(10, 16, 14, 0.6),
+          rgba(8, 14, 12, 0.64)
+        );
         color: rgba(234, 249, 248, 0.96);
         font-size: 0.95rem;
         outline: none;
-        transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease,
+          transform 0.12s ease;
         box-shadow: inset 0 -4px 10px rgba(0, 0, 0, 0.44);
       }
 
@@ -1128,13 +1093,14 @@ $text: #fde8e8;
       input[type="text"]:focus,
       input[type="file"]:focus,
       textarea:focus {
-        border-color: rgba(127, 231, 214, 0.36);
-        box-shadow: 0 12px 36px rgba(127, 231, 214, 0.06), 0 2px 8px rgba(127, 231, 214, 0.04);
+        border-color: rgba(60, 158, 255, 0.9);
+        box-shadow: 0 12px 36px rgba(60, 150, 210, 0.06),
+          0 2px 8px rgba(255, 154, 76, 0.03);
         transform: translateY(-1px);
       }
     }
 
-    /* 按钮行：主按钮改为珍珠渐变，取消为透明珍珠边 */
+    /* 按钮行：主按钮蓝→橙柔和写死色 */
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -1150,50 +1116,69 @@ $text: #fde8e8;
         cursor: pointer;
         font-weight: 800;
         font-size: 0.95rem;
-        transition: background 0.22s ease, box-shadow 0.22s ease, transform 0.12s ease;
+        transition: background 0.22s ease, box-shadow 0.22s ease,
+          transform 0.12s ease;
         min-width: 96px;
-        color: #023232;
-        /* 深色文字保证对比 */
+        color: #042826;
       }
 
-      /* 主按钮：珍珠渐变（今汐） */
+      /* 主按钮（写死渐变：蓝占比较高、橙为柔和点缀） */
       button:not(.cancel) {
-        background: linear-gradient(135deg,
-            #DFFDF9 0%,
-            #BFF8EA 45%,
-            #7FE7D6 100%);
-        box-shadow: 0 12px 36px rgba(127, 231, 214, 0.06), 0 4px 18px rgba(64, 160, 140, 0.04);
-        color: #023232;
+        background: linear-gradient(
+          90deg,
+          #3c9eff 0%,
+          rgba(60, 158, 255, 0.6) 48%,
+          rgba(255, 154, 76, 0.9) 90%
+        );
+        box-shadow: 0 12px 36px rgba(60, 150, 210, 0.06),
+          0 4px 18px rgba(64, 160, 140, 0.04);
+        color: #042826;
       }
 
       button:not(.cancel):hover:not(:disabled) {
         transform: translateY(-4px);
-        box-shadow: 0 22px 66px rgba(5, 18, 16, 0.32), 0 8px 28px rgba(127, 231, 214, 0.08);
+        box-shadow: 0 22px 66px rgba(6, 14, 16, 0.32),
+          0 8px 28px rgba(60, 150, 210, 0.08);
       }
 
       button:not(.cancel):disabled {
-        background: linear-gradient(135deg, rgba(8, 14, 12, 0.48), rgba(6, 12, 10, 0.44));
+        background: linear-gradient(
+          180deg,
+          rgba(10, 14, 12, 0.48),
+          rgba(6, 12, 10, 0.44)
+        );
         opacity: 0.6;
         cursor: not-allowed;
         box-shadow: none;
         color: rgba(180, 220, 215, 0.6);
       }
 
-      /* 取消按钮：透明珍珠边风格 */
+      /* 取消按钮：透明蓝边，hover 有微弱橙光 */
       button.cancel {
         background: transparent;
-        border: 2px solid rgba(127, 231, 214, 0.06);
+        border: 2px solid rgba(60, 150, 210, 0.06);
         color: rgba(230, 245, 243, 0.9);
         min-width: 86px;
         box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.22);
       }
 
       button.cancel:hover {
-        background: rgba(127, 231, 214, 0.02);
+        background: rgba(60, 150, 210, 0.02);
+        box-shadow: 0 6px 18px rgba(255, 154, 76, 0.02) inset;
+      }
+    }
+
+    /* small screens */
+    @media (max-width: 520px) {
+      width: calc(100% - 28px);
+      padding: 18px;
+      border-radius: 12px;
+
+      .modal-actions {
+        justify-content: center;
       }
     }
   }
-
 
   .ranking-panel {
     width: 220px;
@@ -1202,19 +1187,22 @@ $text: #fde8e8;
     top: 84px;
     right: 12px;
     z-index: 1200;
-    color: #EAF9F8;
-    /* 珍珠浅色文字 */
-    font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+    color: #e6eef3;
+    font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial,
+      sans-serif;
 
-    /* 今汐：深海玻璃 -> 深潮色 */
-    background: linear-gradient(180deg,
-        rgba(4, 23, 22, 0.94),
-        rgba(6, 28, 26, 0.92));
+    /* 深夜玻璃底（冷色基调），边框与内阴影保留轻微冷光 */
+    background: linear-gradient(
+      180deg,
+      rgba(6, 12, 18, 0.94),
+      rgba(8, 16, 20, 0.92)
+    );
     border-radius: 18px;
-    border: 1px solid rgba(127, 231, 214, 0.03);
+    border: 1px solid rgba(60, 150, 210, 0.03);
     -webkit-backdrop-filter: blur(8px) saturate(1.02);
     backdrop-filter: blur(8px) saturate(1.02);
-    box-shadow: 0 18px 56px rgba(3, 8, 8, 0.72), inset 0 1px 0 rgba(127, 231, 214, 0.02);
+    box-shadow: 0 18px 56px rgba(3, 8, 8, 0.72),
+      inset 0 1px 0 rgba(60, 150, 210, 0.02);
 
     &.collapsed {
       height: auto;
@@ -1234,30 +1222,49 @@ $text: #fde8e8;
         margin: 0;
         font-size: 1.05rem;
         font-weight: 900;
-        color: #DFFDF9;
-        /* 珍珠青标题 */
-        font-family: "Zhi Mang Xing", "STKaiti", serif;
+        /* 标题用蓝→橙渐变文字裁剪，更具角色感 */
+        background: linear-gradient(
+          90deg,
+          #3c9eff 0%,
+          #7ecbff 48%,
+          #ff9a4c 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        font-family: "STKaiti", "KaiTi", "Songti SC", "Georgia", "PingFang SC",
+          "Microsoft YaHei", serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
         letter-spacing: 0.6px;
-        text-shadow: 0 6px 18px rgba(6, 48, 44, 0.06);
+        text-shadow: 0 6px 18px rgba(6, 48, 44, 0.04);
       }
 
       .toggle-icon {
         font-size: 1rem;
-        color: #7FE7D6;
-        /* 薄雾海绿图标色 */
-        background: linear-gradient(180deg, rgba(8, 20, 18, 0.48), rgba(6, 16, 14, 0.36));
+        color: #3c9eff; /* 冰蓝图标色 */
+        background: linear-gradient(
+          180deg,
+          rgba(8, 18, 20, 0.5),
+          rgba(6, 14, 14, 0.36)
+        );
         padding: 6px 8px;
         border-radius: 9px;
-        border: 1px solid rgba(127, 231, 214, 0.02);
-        box-shadow: 0 6px 14px rgba(3, 10, 10, 0.44), inset 0 1px 0 rgba(127, 231, 214, 0.01);
-        transition: transform 220ms, box-shadow 220ms;
+        border: 1px solid rgba(60, 150, 210, 0.02);
+        box-shadow: 0 6px 14px rgba(3, 10, 10, 0.44),
+          inset 0 1px 0 rgba(60, 150, 210, 0.01);
+        transition: transform 220ms, box-shadow 220ms, color 220ms, filter 220ms;
+        will-change: transform, box-shadow;
       }
 
-      /* header hover / focus 更明显的珍珠微光 */
       &:hover .toggle-icon,
       &:focus-within .toggle-icon {
         transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(127, 231, 214, 0.06), inset 0 1px 0 rgba(127, 231, 214, 0.02);
+        box-shadow: 0 12px 30px rgba(60, 150, 210, 0.06),
+          inset 0 1px 0 rgba(255, 154, 76, 0.02);
+        color: #7ecbff;
+        filter: saturate(1.08);
       }
     }
 
@@ -1275,9 +1282,10 @@ $text: #fde8e8;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, rgba(127, 231, 214, 0.18), rgba(223, 253, 249, 0.10));
+        background: linear-gradient(180deg, #3c9eff 0%, #ff9a4c 100%);
         border-radius: 8px;
-        border: 1px solid rgba(127, 231, 214, 0.02);
+        border: 1px solid rgba(60, 150, 210, 0.02);
+        opacity: 0.95;
       }
 
       &::-webkit-scrollbar-track {
@@ -1294,22 +1302,31 @@ $text: #fde8e8;
       border-radius: 12px;
       cursor: default;
 
-      /* 今汐风：暗匣小卡片，薄雾边线 */
-      background: linear-gradient(180deg, rgba(8, 24, 22, 0.56), rgba(6, 20, 18, 0.54));
-
-      transition: transform 260ms cubic-bezier(.2, .9, .3, 1), box-shadow 260ms, background 260ms, color 200ms;
+      /* 深色匣子为主，hover 时带蓝橙晕光 */
+      background: linear-gradient(
+        180deg,
+        rgba(8, 18, 18, 0.56),
+        rgba(6, 16, 16, 0.54)
+      );
+      transition: transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1),
+        box-shadow 260ms, background 260ms, color 200ms;
       position: relative;
-
       &:hover {
         transform: translateY(-6px);
-        box-shadow: 0 18px 48px rgba(4, 12, 10, 0.56), 0 0 28px rgba(127, 231, 214, 0.04);
-        background: linear-gradient(90deg, rgba(10, 26, 24, 0.66), rgba(8, 22, 20, 0.62));
+        box-shadow: 0 18px 48px rgba(4, 12, 10, 0.56),
+          0 0 28px rgba(60, 150, 210, 0.06), 0 0 24px rgba(255, 154, 76, 0.03);
+        background: linear-gradient(
+          90deg,
+          rgba(10, 22, 26, 0.66),
+          rgba(8, 18, 20, 0.62)
+        );
       }
 
       &:focus-within,
       &:focus {
         outline: none;
-        box-shadow: 0 18px 48px rgba(127, 231, 214, 0.06), 0 0 0 4px rgba(127, 231, 214, 0.03);
+        box-shadow: 0 18px 48px rgba(60, 150, 210, 0.06),
+          0 0 0 4px rgba(60, 150, 210, 0.03);
         transform: translateY(-4px);
       }
 
@@ -1318,9 +1335,8 @@ $text: #fde8e8;
         text-align: center;
         font-weight: 900;
         font-size: 1rem;
-        color: #DFFDF9;
-        /* 珍珠数字 */
-        text-shadow: 0 2px 8px rgba(6, 48, 44, 0.06);
+        color: #a8e7ff; /* 冷光数字 */
+        text-shadow: 0 2px 8px rgba(6, 48, 44, 0.04);
         flex-shrink: 0;
       }
 
@@ -1328,7 +1344,7 @@ $text: #fde8e8;
         flex: 1;
         padding: 0 8px;
         font-size: 0.95rem;
-        color: #DFFDF9;
+        color: #e6eef3;
         font-weight: 700;
         white-space: normal;
         word-break: break-word;
@@ -1337,8 +1353,7 @@ $text: #fde8e8;
 
       .count {
         font-size: 0.9rem;
-        color: #7FE7D6;
-        /* 薄雾海绿小计数 */
+        color: #7ecbff; /* 冷蓝小计数 */
         font-weight: 800;
         min-width: 36px;
         text-align: right;
@@ -1346,59 +1361,69 @@ $text: #fde8e8;
         flex-shrink: 0;
       }
 
-      /* ---------- 前三名强化（今汐版：珍珠 / 冷金 / 石青） ---------- */
+      /* ---------- 前三名强化（蓝→橙调） ---------- */
       &.rank-1 {
-        background: linear-gradient(135deg, #DFFDF9 0%, #BFF8EE 50%, #7FE7D6 100%);
+        background: linear-gradient(
+          135deg,
+          #3c9eff 0%,
+          #7ecbff 45%,
+          #ffb77a 100%
+        );
         color: #042826;
-        box-shadow: 0 18px 56px rgba(127, 231, 214, 0.12), 0 0 30px rgba(127, 231, 214, 0.06);
+        box-shadow: 0 18px 56px rgba(60, 150, 210, 0.12),
+          0 0 30px rgba(255, 154, 76, 0.08);
 
         .rank {
           color: #042826;
           text-shadow: 0 4px 14px rgba(2, 10, 10, 0.16);
         }
-
         .name {
           color: #042826;
         }
-
         .count {
           color: #042826;
         }
       }
 
       &.rank-2 {
-        background: linear-gradient(135deg, #CFF8EE 0%, #9FEFE1 55%, #6ED6BC 100%);
+        background: linear-gradient(
+          135deg,
+          #7ecbff 0%,
+          #9feef0 55%,
+          #ffb382 100%
+        );
         color: #042826;
         box-shadow: 0 14px 48px rgba(64, 190, 170, 0.08);
 
         .rank {
           color: #042826;
         }
-
         .name {
           color: #042826;
         }
-
         .count {
           color: #042826;
         }
       }
 
       &.rank-3 {
-        background: linear-gradient(135deg, rgba(175, 240, 225, 0.12) 0%, rgba(140, 230, 210, 0.16) 60%, rgba(96, 200, 180, 0.20) 100%);
-        color: #DFFDF9;
+        background: linear-gradient(
+          135deg,
+          rgba(62, 160, 240, 0.12) 0%,
+          rgba(120, 200, 240, 0.16) 60%,
+          rgba(255, 154, 76, 0.08) 100%
+        );
+        color: #e6eef3;
         box-shadow: 0 10px 36px rgba(70, 160, 140, 0.08);
 
         .rank {
-          color: #CFF6F0;
+          color: #cfeffe;
         }
-
         .name {
-          color: #DFFDF9;
+          color: #e6eef3;
         }
-
         .count {
-          color: #CFF6F0;
+          color: #cfeffe;
         }
       }
     }
@@ -1414,7 +1439,5 @@ $text: #fde8e8;
       opacity: 0;
     }
   }
-
-
 }
 </style>

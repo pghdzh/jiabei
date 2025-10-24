@@ -1,12 +1,22 @@
 <template>
   <div class="yuzuki-resources">
     <div class="carousel carousel1" aria-hidden="true">
-      <img v-for="(src, idx) in randomFive" :key="idx" :src="src" class="carousel-image"
-        :class="{ active: idx === currentIndex }" />
+      <img
+        v-for="(src, idx) in randomFive"
+        :key="idx"
+        :src="src"
+        class="carousel-image"
+        :class="{ active: idx === currentIndex }"
+      />
     </div>
     <div class="carousel carousel2" aria-hidden="true">
-      <img v-for="(src, idx) in randomFive2" :key="idx" :src="src" class="carousel-image"
-        :class="{ active: idx === currentIndex }" />
+      <img
+        v-for="(src, idx) in randomFive2"
+        :key="idx"
+        :src="src"
+        class="carousel-image"
+        :class="{ active: idx === currentIndex }"
+      />
     </div>
     <header class="hero">
       <div class="hero-inner">
@@ -18,21 +28,49 @@
     <main class="container">
       <section class="uploader" :class="{ collapsed: uploaderCollapsed }">
         <div class="uploader-head">
-          <button class="toggle" @click="toggleUploader" :aria-expanded="!uploaderCollapsed">
+          <button
+            class="toggle"
+            @click="toggleUploader"
+            :aria-expanded="!uploaderCollapsed"
+          >
             <span v-if="uploaderCollapsed">展开上传区</span>
             <span v-else>收起上传区</span>
           </button>
         </div>
 
-        <form @submit.prevent="addResource" class="upload-form" :aria-hidden="uploaderCollapsed">
+        <form
+          @submit.prevent="addResource"
+          class="upload-form"
+          :aria-hidden="uploaderCollapsed"
+        >
           <div class="row">
-            <input v-model="form.title" type="text" placeholder="标题（必填，如果有解压码之类的也写这里吧）" aria-label="标题" />
-            <input v-model="form.type" type="text" placeholder="链接类型(网页链接、b站视频、网盘链接等等)" aria-label="来源" />
+            <input
+              v-model="form.title"
+              type="text"
+              placeholder="标题（必填，如果有解压码之类的也写这里吧）"
+              aria-label="标题"
+            />
+            <input
+              v-model="form.type"
+              type="text"
+              placeholder="链接类型(网页链接、b站视频、网盘链接等等)"
+              aria-label="来源"
+            />
           </div>
 
           <div class="row">
-            <input v-model="form.uploader" type="text" placeholder="上传人（可选）" aria-label="上传人" />
-            <input v-model="form.link" type="url" placeholder="链接(只输入网址不能有中文)" aria-label="链接" />
+            <input
+              v-model="form.uploader"
+              type="text"
+              placeholder="上传人（可选）"
+              aria-label="上传人"
+            />
+            <input
+              v-model="form.link"
+              type="url"
+              placeholder="链接(只输入网址不能有中文)"
+              aria-label="链接"
+            />
           </div>
 
           <div class="actions">
@@ -57,7 +95,13 @@
 
         <ul class="items">
           <li v-for="item in sortedResources" :key="item.id" class="item">
-            <a :href="item.link" target="_blank" rel="noopener noreferrer" class="title">{{ item.title }}</a>
+            <a
+              :href="item.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="title"
+              >{{ item.title }}</a
+            >
 
             <div class="meta">
               <div class="left">
@@ -67,12 +111,21 @@
               </div>
 
               <div class="right">
-                <button @click.prevent="handleLike(item)" :aria-pressed="likedIds.has(String(item.id))" class="like-btn"
-                  :class="{ active: likedIds.has(String(item.id)) }">
-                  <img :src="likedIds.has(String(item.id))
-                    ? '/icons/heart-red-filled.svg'
-                    : '/icons/heart-red-outline.svg'
-                    " class="heart-icon" alt="heart" />
+                <button
+                  @click.prevent="handleLike(item)"
+                  :aria-pressed="likedIds.has(String(item.id))"
+                  class="like-btn"
+                  :class="{ active: likedIds.has(String(item.id)) }"
+                >
+                  <img
+                    :src="
+                      likedIds.has(String(item.id))
+                        ? '/icons/heart-red-filled.svg'
+                        : '/icons/heart-red-outline.svg'
+                    "
+                    class="heart-icon"
+                    alt="heart"
+                  />
                   <span class="count">{{ item.likes }}</span>
                 </button>
 
@@ -113,8 +166,8 @@ interface Resource {
   role_key?: string;
 }
 
-const STORAGE_KEY = "jinXi_resources_v1";
-const DEFAULT_ROLE = "jinXi";
+const STORAGE_KEY = "jiaBei_resources_v1";
+const DEFAULT_ROLE = "jiaBei";
 
 const form = ref<{
   title: string;
@@ -346,14 +399,15 @@ function formatTime(iso: string) {
 
 <style scoped lang="scss">
 .yuzuki-resources {
-  
-  color: #EAF9F8;
+  color: #e6eef3; /* 主文字偏珍珠白 */
   display: flex;
   flex-direction: column;
   padding-top: 60px;
-  font-family: "Noto Sans SC", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Noto Sans SC", "PingFang SC", "Helvetica Neue", Arial,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 
+  /* 背景轮播：保留，但冷调更明显 */
   .carousel {
     position: absolute;
     inset: 0;
@@ -364,7 +418,12 @@ function formatTime(iso: string) {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(2, 8, 14, 0.12), rgba(4, 18, 18, 0.22));
+      /* 更冷的叠加遮罩，带极淡橙尾光 */
+      background: linear-gradient(
+        180deg,
+        rgba(3, 8, 16, 0.16),
+        rgba(6, 14, 18, 0.28)
+      );
       pointer-events: none;
       z-index: 1;
       mix-blend-mode: soft-light;
@@ -391,13 +450,17 @@ function formatTime(iso: string) {
     display: none;
   }
 
-  /* 顶区 hero（今汐：深海玻璃 + 珍珠标题） */
+  /* HERO：标题改为蓝→橙渐变裁剪文本，保留珠光与玻璃感 */
   .hero {
     padding: 18px 12px;
-    background: linear-gradient(180deg, rgba(6, 22, 20, 0.48), rgba(8, 20, 18, 0.40));
+    background: linear-gradient(
+      180deg,
+      rgba(6, 18, 20, 0.48),
+      rgba(8, 18, 18, 0.4)
+    );
     -webkit-backdrop-filter: blur(4px) saturate(1.05);
     backdrop-filter: blur(4px) saturate(1.05);
-    border-bottom: 1px solid rgba(127, 231, 214, 0.03);
+    border-bottom: 1px solid rgba(60, 150, 210, 0.03);
 
     .hero-inner {
       max-width: 1000px;
@@ -413,14 +476,23 @@ function formatTime(iso: string) {
         width: auto;
         font-weight: 900;
         letter-spacing: 0.6px;
-        color: #7FE7D6;
-        /* 薄雾海绿 */
-        text-shadow: 0 6px 22px rgba(5, 40, 36, 0.06);
+        /* 蓝 -> 橙 渐变裁剪 */
+        background: linear-gradient(
+          90deg,
+          #3c9eff 0%,
+          #7ecbff 50%,
+          #ff9a4c 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        text-shadow: 0 6px 22px rgba(6, 30, 46, 0.06);
       }
 
       .subtitle {
         margin-top: 6px;
-        color: rgba(234, 249, 248, 0.9);
+        color: rgba(230, 238, 243, 0.9);
         font-size: 13px;
       }
     }
@@ -434,13 +506,17 @@ function formatTime(iso: string) {
     box-sizing: border-box;
     z-index: 99;
 
-    /* 上传区（玻璃质感 + 珍珠高光） */
+    /* 上传区（玻璃质感 + 蓝橙主色呼应） */
     .uploader {
       border-radius: 14px;
       padding: 0;
-      box-shadow: 0 18px 56px rgba(0, 12, 14, 0.62);
-      border: 1px solid rgba(127, 231, 214, 0.02);
-      background: linear-gradient(180deg, rgba(6, 18, 16, 0.26), rgba(4, 14, 12, 0.20));
+      box-shadow: 0 18px 56px rgba(2, 8, 12, 0.62);
+      border: 1px solid rgba(60, 150, 210, 0.03);
+      background: linear-gradient(
+        180deg,
+        rgba(6, 18, 18, 0.26),
+        rgba(4, 14, 12, 0.2)
+      );
 
       .uploader-head {
         display: flex;
@@ -449,14 +525,19 @@ function formatTime(iso: string) {
 
         .toggle {
           background: transparent;
-          border: 1px solid rgba(127, 231, 214, 0.04);
-          color: #BFF8EE;
+          border: 1px solid rgba(60, 150, 210, 0.04);
+          color: #bfefff;
           padding: 6px 10px;
           border-radius: 8px;
           cursor: pointer;
           font-weight: 700;
           transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
           box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.32);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(60, 150, 210, 0.08);
+          }
         }
       }
 
@@ -476,10 +557,14 @@ function formatTime(iso: string) {
             flex: 1 1 0;
             padding: 10px 12px;
             border-radius: 10px;
-            border: 1px solid rgba(127, 231, 214, 0.03);
+            border: 1px solid rgba(60, 150, 210, 0.03);
             font-size: 14px;
-            background: linear-gradient(180deg, rgba(8, 20, 18, 0.22), rgba(6, 16, 14, 0.14));
-            color: #DFFDF9;
+            background: linear-gradient(
+              180deg,
+              rgba(8, 20, 18, 0.22),
+              rgba(6, 16, 14, 0.14)
+            );
+            color: #dff7ff;
             font-weight: 700;
             outline: none;
             transition: box-shadow 0.16s, border-color 0.16s, transform 0.08s;
@@ -493,13 +578,14 @@ function formatTime(iso: string) {
           input::placeholder,
           textarea::placeholder,
           select::placeholder {
-            color: rgba(218, 241, 238, 0.5);
+            color: rgba(210, 235, 245, 0.5);
           }
 
           input:focus,
           select:focus {
-            border-color: rgba(127, 231, 214, 0.36);
-            box-shadow: 0 12px 36px rgba(127, 231, 214, 0.06);
+            border-color: rgba(60, 150, 210, 0.44);
+            box-shadow: 0 12px 36px rgba(60, 150, 210, 0.06),
+              0 2px 8px rgba(255, 154, 76, 0.03);
             transform: translateY(-1px);
           }
         }
@@ -517,10 +603,15 @@ function formatTime(iso: string) {
             cursor: pointer;
 
             &.primary {
-              background: linear-gradient(135deg, #DFFDF9 0%, #BFF8EE 55%, #7FE7D6 100%);
+              /* 主按钮：蓝→橙柔和渐变（蓝占比较高） */
+              background: linear-gradient(
+                90deg,
+                #3c9eff 0%,
+                #7ecbff 52%,
+                #ffb27a 100%
+              );
               color: #042826;
-              /* 深色文本保证对比 */
-              box-shadow: 0 12px 36px rgba(50, 170, 150, 0.08);
+              box-shadow: 0 12px 36px rgba(60, 150, 210, 0.08);
               transition: transform 0.12s ease, box-shadow 0.14s ease;
             }
 
@@ -532,7 +623,7 @@ function formatTime(iso: string) {
             &.secondary {
               background: transparent;
               color: rgba(200, 245, 240, 0.9);
-              border: 1px solid rgba(127, 231, 214, 0.04);
+              border: 1px solid rgba(60, 150, 210, 0.04);
             }
           }
         }
@@ -547,7 +638,7 @@ function formatTime(iso: string) {
       }
     }
 
-    /* 资源列表区（卡片：冰蓝晶体质感） */
+    /* 资源列表：卡片与 hover 改为蓝橙氛围 */
     .list {
       margin-top: 18px;
 
@@ -560,17 +651,21 @@ function formatTime(iso: string) {
         h2 {
           font-size: 16px;
           margin: 0;
-          color: #7FE7D6;
-          /* 标题薄雾海绿 */
+          /* 标题使用蓝色为主，偏亮 */
+          color: #7ecbff;
           font-weight: 800;
         }
 
         .sort select {
           padding: 8px;
           border-radius: 8px;
-          border: 1px solid rgba(127, 231, 214, 0.04);
-          background: linear-gradient(180deg, rgba(6, 30, 30, 0.58), rgba(4, 20, 20, 0.56));
-          color: #BFF8EE;
+          border: 1px solid rgba(60, 150, 210, 0.04);
+          background: linear-gradient(
+            180deg,
+            rgba(6, 30, 34, 0.58),
+            rgba(4, 20, 22, 0.56)
+          );
+          color: #bfefff;
         }
       }
 
@@ -586,19 +681,29 @@ function formatTime(iso: string) {
         border-radius: 12px;
         padding: 12px;
         margin-bottom: 12px;
-        background: linear-gradient(180deg, rgba(8, 18, 16, 0.22), rgba(6, 14, 12, 0.32));
-        border: 1px solid rgba(60, 180, 170, 0.03);
+        background: linear-gradient(
+          180deg,
+          rgba(8, 18, 16, 0.22),
+          rgba(6, 14, 12, 0.32)
+        );
+        border: 1px solid rgba(60, 150, 210, 0.03);
         transition: transform 0.18s cubic-bezier(0.2, 0.9, 0.25, 1),
           box-shadow 0.18s ease, background 0.18s ease;
 
         &:hover {
-          background: linear-gradient(180deg, rgba(8, 18, 16, 0.72), rgba(6, 14, 12, 0.62));
+          background: linear-gradient(
+            180deg,
+            rgba(8, 18, 16, 0.72),
+            rgba(6, 14, 12, 0.62)
+          );
           transform: translateY(-6px);
+          box-shadow: 0 20px 60px rgba(2, 8, 12, 0.6),
+            0 0 28px rgba(60, 150, 210, 0.06), 0 0 18px rgba(255, 154, 76, 0.03);
         }
 
         .title {
           display: block;
-          color: #EAF9F8;
+          color: #e6eef3;
           font-weight: 800;
           text-decoration: none;
           margin-bottom: 8px;
@@ -620,7 +725,7 @@ function formatTime(iso: string) {
             gap: 8px;
 
             .uploader {
-              color: #BFF8EE;
+              color: #bfefff;
               font-weight: 700;
             }
 
@@ -629,7 +734,7 @@ function formatTime(iso: string) {
             }
 
             time {
-              color: rgba(234, 249, 248, 0.95);
+              color: rgba(230, 238, 243, 0.95);
             }
           }
 
@@ -648,7 +753,7 @@ function formatTime(iso: string) {
               display: inline-flex;
               align-items: center;
               gap: 6px;
-              transition: transform 0.08s, background 0.12s;
+              transition: transform 0.08s, background 0.12s, color 0.12s;
               color: rgba(207, 247, 241, 0.95);
             }
 
@@ -661,12 +766,16 @@ function formatTime(iso: string) {
               height: 18px;
               display: block;
               filter: grayscale(100%) opacity(0.9);
+              transition: transform 160ms, filter 160ms, box-shadow 160ms;
             }
 
             .like-btn.active .heart-icon {
               filter: none;
               transform: scale(1.06);
-              box-shadow: 0 6px 20px rgba(127, 231, 214, 0.10);
+              box-shadow: 0 6px 20px rgba(60, 150, 210, 0.1);
+              /* 激活时增加微弱橙色晕 */
+              box-shadow: 0 6px 20px rgba(60, 150, 210, 0.08),
+                0 0 12px rgba(255, 154, 76, 0.04);
             }
 
             .badge {
@@ -674,9 +783,13 @@ function formatTime(iso: string) {
               border-radius: 999px;
               font-size: 12px;
               font-weight: 700;
-              background: linear-gradient(180deg, rgba(127, 231, 214, 0.12), rgba(95, 200, 180, 0.06));
-              color: #BFF8EE;
-              border: 1px solid rgba(127, 231, 214, 0.04);
+              background: linear-gradient(
+                180deg,
+                rgba(60, 150, 210, 0.12),
+                rgba(255, 154, 76, 0.04)
+              );
+              color: #bfefff;
+              border: 1px solid rgba(60, 150, 210, 0.04);
             }
           }
         }
@@ -684,7 +797,7 @@ function formatTime(iso: string) {
 
       .empty {
         text-align: center;
-        color: #7FE7D6;
+        color: #7ecbff;
         padding: 28px 0;
       }
     }
@@ -697,14 +810,13 @@ function formatTime(iso: string) {
     margin: 20px 0 40px;
   }
 
-  /* 响应式：移动端优化 */
+  /* 响应式调整 */
   @media (max-width: 640px) {
     padding-top: 80px;
 
     .carousel1 {
       display: none;
     }
-
     .carousel2 {
       display: block;
     }
@@ -729,14 +841,20 @@ function formatTime(iso: string) {
     .upload-form .row {
       flex-direction: column;
     }
-
     .upload-form .actions {
       flex-direction: column;
       align-items: stretch;
     }
-
     .items .item .title {
       white-space: normal;
+    }
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
     }
   }
 }

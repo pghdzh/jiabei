@@ -40,16 +40,20 @@ import navbar from "./components/navbar.vue";
 const showIntro = ref(true);
 const videoSrc = ref(""); // 新增
 const lines = [
-  "薄雾落尽，今汐未眠。",
-  "潮声轻叩，岁光应声。",
-  "一缕韶光，一声低语，一处归处。",
-  "以潮为矩，以光为引，步履自有方向。",
-  "汐光微暖，照见未名的誓言。",
-  "在潮位与年轮之间，她悄悄定下归期。",
-  "把昨日的疑问折给潮汐，让答案慢慢上岸。",
-  "珍珠微递，藏着未宣之志。",
-  "低语里藏潮汐，潮汐里藏回程。",
-  "韶光为笔，潮声为墨，写下一页可行的未来。",
+  "永火燃尽之处，猎魔人于此驻足",
+  "炼狱的回响中，我听见你的呼唤",
+  "以漆黑羽翼为契，缔结此间相逢",
+  "冥途彼岸的旅人，在此稍作停歇",
+  "烈焰不会吞噬真相，只会照亮前路",
+  "猎魔的誓约从未熄灭，如同永火长存",
+  "在炼狱的灼热中，寻找真实的碎片",
+  "影羽飘落之地，即是归处",
+  "永火的恶魔在此，诉说猎魔的史诗",
+  "穿越冥途的回响，抵达此刻的安宁",
+  "炼狱的炽热，不及相遇的温暖",
+  "以猎魔人之名，守护此间片刻",
+  "漆黑的羽翼下，藏着温柔的低语",
+  "永火燃烧的轨迹，绘出相逢的篇章",
 ] as const;
 
 const displayText = ref("");
@@ -175,13 +179,18 @@ onBeforeUnmount(() => {
         line-height: 1.1;
         color: #dff8ff;
 
-        background: linear-gradient(90deg, #d7fff6, #7fe7d6);
+        background: linear-gradient(
+          90deg,
+          #3c9eff 0%,
+          #7ecbff 52%,
+          #ff9a4c 100%
+        );
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
         -webkit-text-fill-color: transparent;
         -webkit-text-stroke: 0.2px rgba(0, 0, 0, 0.06);
-        text-shadow: 0 6px 18px rgba(6, 40, 56, 0.22);
+        text-shadow: 0 6px 18px rgba(8, 30, 46, 0.18);
       }
     }
   }

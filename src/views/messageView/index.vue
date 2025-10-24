@@ -25,7 +25,7 @@
         <h1>留言板</h1>
         <span class="title-count">（共{{ count }}条）</span>
 
-        <p class="subtitle">潮声寄语，岁光回响</p>
+        <p class="subtitle">愿以永火为契，铭刻此刻心语</p>
       </div>
     </header>
 
@@ -243,17 +243,19 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-$bg-start: #041718; // 深海绿底
-$bg-end: #062c2b; // 深潮色
-$accent-1: #7fe7d6; // 薄雾海绿（主光）
-$accent-2: #dffdf9; // 珍珠青（次光）
-$text-main: #eaf9f8; // 正文浅色
-$text-muted: rgba(234, 249, 248, 0.78);
-$card-bg: rgba(8, 26, 24, 0.46); // 玻璃卡片底
-$card-border: rgba(127, 231, 214, 0.06);
-$soft-shadow: rgba(3, 10, 10, 0.5);
-$inner-glow: rgba(127, 231, 214, 0.03);
-$pearl-glow: rgba(127, 231, 214, 0.06);
+$bg-start: #071017; // 深夜墨蓝底（偏冷）
+$bg-end: #0b1b22; // 深潮蓝黑
+
+$accent-1: #3c9eff; // 冰蓝（渐变起点）
+$accent-2: #ff9a4c; // 柔和炽橙（渐变终点）
+$text-main: #e6eef3; // 主文本浅色
+$text-muted: rgba(230, 238, 243, 0.78);
+
+$card-bg: rgba(10, 20, 22, 0.46); // 玻璃卡片底（偏冷）
+$card-border: rgba(60, 150, 210, 0.06); // 冷蓝细边
+$soft-shadow: rgba(2, 8, 10, 0.5);
+$inner-glow: rgba(60, 150, 210, 0.03);
+$warm-flare: rgba(255, 154, 76, 0.035); // 橙色微光，极柔和
 
 .megumi-message-board {
   position: relative;
@@ -261,7 +263,6 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
   padding-top: 110px;
   display: flex;
   flex-direction: column;
-  /* 今汐：深海 -> 珍珠薄雾 */
   background: linear-gradient(180deg, $bg-start 0%, $bg-end 100%);
 
   font-family: "Noto Sans SC", "Noto Sans", system-ui, -apple-system, "Segoe UI",
@@ -283,8 +284,8 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
       inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(2, 12, 14, 0.12),
-        rgba(4, 18, 20, 0.24)
+        rgba(6, 10, 14, 0.12),
+        rgba(8, 14, 18, 0.26)
       );
       pointer-events: none;
       z-index: 1;
@@ -298,7 +299,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
       object-fit: cover;
       opacity: 0;
       transition: opacity 1s ease, transform 10s linear;
-      filter: blur(0.6px) saturate(0.88) contrast(0.98);
+      filter: blur(0.6px) saturate(0.9) contrast(0.98);
       transform: scale(1.05);
 
       &.active {
@@ -312,7 +313,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     display: none;
   }
 
-  /* ---------- 顶部标题（今汐：薄雾玻璃 + 珍珠光） ---------- */
+  /* ---------- 顶部标题（蓝橙柔和玻璃） ---------- */
   .board-header {
     position: absolute;
     top: 72px;
@@ -323,14 +324,14 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
 
     padding: 14px 18px;
     border-radius: 14px;
-    box-shadow: 0 12px 36px rgba(3, 10, 10, 0.6), inset 0 1px 0 $inner-glow;
+    box-shadow: 0 12px 36px $soft-shadow, inset 0 1px 0 $inner-glow;
     backdrop-filter: blur(6px) saturate(1.02);
     z-index: 6;
-    border: 1px solid rgba(127, 231, 214, 0.03);
+    border: 1px solid rgba(60, 150, 210, 0.03);
     background: linear-gradient(
       180deg,
-      rgba(10, 24, 22, 0.14),
-      rgba(6, 18, 16, 0.16)
+      rgba(8, 18, 20, 0.14),
+      rgba(6, 14, 12, 0.16)
     );
 
     .title-wrap {
@@ -344,7 +345,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         color: $accent-2;
         letter-spacing: 0.4px;
         font-weight: 900;
-        text-shadow: 0 2px 12px rgba(10, 80, 74, 0.06);
+        text-shadow: 0 2px 12px rgba(12, 56, 72, 0.06);
       }
 
       .title-count {
@@ -360,26 +361,26 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         color: rgba($text-main, 0.94);
         font-size: 13px;
         font-weight: 600;
-        text-shadow: 0 1px 6px rgba(127, 231, 214, 0.02);
+        text-shadow: 0 1px 6px rgba(60, 150, 210, 0.02);
       }
     }
 
-    /* 角落的珍珠光斑装饰（低饱和） */
+    /* 角落的柔和光斑（蓝为主，夹以极淡橙） */
     &::before {
       content: "";
       position: absolute;
       right: 12px;
       top: 8px;
-      width: 84px;
+      width: 88px;
       height: 48px;
       background: radial-gradient(
           34px 16px at 20% 40%,
-          rgba(127, 231, 214, 0.1),
+          rgba(60, 150, 210, 0.08),
           transparent 30%
         ),
         radial-gradient(
           40px 20px at 60% 60%,
-          rgba(223, 253, 249, 0.06),
+          rgba(255, 154, 76, 0.03),
           transparent 30%
         );
       filter: blur(6px);
@@ -421,19 +422,19 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         padding: 12px;
         background: linear-gradient(
           180deg,
-          rgba(6, 28, 28, 0.28),
-          rgba(8, 30, 30, 0.22)
+          rgba(8, 22, 22, 0.28),
+          rgba(10, 24, 24, 0.22)
         );
         border-radius: 12px;
-        box-shadow: 0 6px 18px rgba(2, 12, 14, 0.5);
-        border: 1px solid rgba(127, 231, 214, 0.02);
+        box-shadow: 0 6px 18px rgba(2, 10, 12, 0.5);
+        border: 1px solid rgba(60, 150, 210, 0.02);
       }
 
       .sk-avatar {
         width: 44px;
         height: 44px;
         border-radius: 10px;
-        background: linear-gradient(90deg, $accent-1, $accent-2);
+        background: linear-gradient(90deg, $accent-1, rgba($accent-2, 0.85));
       }
 
       .sk-lines {
@@ -444,8 +445,8 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           border-radius: 6px;
           background: linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.04),
-            rgba(200, 255, 245, 0.03)
+            rgba(255, 255, 255, 0.03),
+            rgba(200, 240, 255, 0.02)
           );
           margin-bottom: 8px;
         }
@@ -457,12 +458,12 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     }
   }
 
-  /* ---------- 单条消息卡片（今汐风） ---------- */
+  /* ---------- 单条消息卡片（嘉贝莉娜风：蓝橙柔和） ---------- */
   .message-card {
     background: linear-gradient(
       180deg,
-      rgba(6, 18, 16, 0.38),
-      rgba(8, 20, 18, 0.42)
+      rgba(8, 18, 18, 0.38),
+      rgba(10, 20, 18, 0.44)
     );
     border-radius: 14px;
     padding: 14px 16px;
@@ -488,12 +489,12 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
       height: 44px;
       background: radial-gradient(
           circle at 30% 30%,
-          rgba(127, 231, 214, 0.08),
+          rgba(60, 150, 210, 0.07),
           transparent 30%
         ),
         radial-gradient(
           circle at 70% 70%,
-          rgba(223, 253, 249, 0.04),
+          rgba(255, 154, 76, 0.02),
           transparent 30%
         );
       filter: blur(4px);
@@ -505,11 +506,11 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     &:hover {
       transform: translateY(-8px) scale(1.01);
       box-shadow: 0 28px 84px rgba(2, 10, 10, 0.6);
-      border-color: rgba(127, 231, 214, 0.1);
+      border-color: rgba(60, 150, 210, 0.1);
       background: linear-gradient(
         180deg,
-        rgba(8, 22, 20, 0.52),
-        rgba(6, 18, 16, 0.58)
+        rgba(10, 20, 18, 0.54),
+        rgba(8, 16, 14, 0.58)
       );
     }
 
@@ -534,9 +535,11 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           justify-content: center;
           font-weight: 900;
           color: #042826;
-          background: linear-gradient(180deg, $accent-2 0%, $accent-1 60%);
-          border: 2px solid rgba(127, 231, 214, 0.04);
-          box-shadow: inset 0 -6px 18px rgba(10, 40, 36, 0.06);
+          background: linear-gradient(
+            180deg,
+            rgba($accent-1, 0.9) 0%,
+            $accent-2 100%
+          );
           font-size: 16px;
           flex-shrink: 0;
         }
@@ -544,7 +547,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         .meta-texts {
           .message-name {
             font-size: 15px;
-            color: $accent-2;
+            color: rgba($accent-2, 0.95);
             font-weight: 800;
             line-height: 1;
             text-shadow: 0 3px 8px rgba(6, 40, 36, 0.06);
@@ -558,7 +561,6 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         }
       }
 
-      /* 右侧：徽章（今汐风替代焰棋） */
       .shouan-icon {
         display: inline-grid;
         place-items: center;
@@ -572,8 +574,8 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
 
         background: linear-gradient(
           180deg,
-          rgba(4, 10, 10, 0.88),
-          rgba(6, 12, 12, 0.94)
+          rgba(6, 12, 12, 0.88),
+          rgba(8, 14, 12, 0.94)
         );
         border: 1px solid $card-border;
         box-shadow: 0 8px 30px rgba(3, 10, 10, 0.48), inset 0 1px 0 $inner-glow;
@@ -589,12 +591,11 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           overflow: visible;
         }
 
-        /* 内部图形（调整为今汐色） */
         .ember-core path {
-          fill: $accent-2;
+          fill: rgba($accent-2, 0.9);
           opacity: 0.12;
           transition: fill 260ms, opacity 260ms, transform 260ms, filter 260ms;
-          filter: drop-shadow(0 8px 20px rgba(127, 231, 214, 0.04));
+          filter: drop-shadow(0 8px 20px rgba(60, 150, 210, 0.04));
         }
 
         .ember-sparks circle {
@@ -610,15 +611,15 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
             inset 0 1px 0 $inner-glow;
           background: linear-gradient(
             180deg,
-            rgba(8, 18, 16, 0.98),
-            rgba(6, 14, 12, 0.99)
+            rgba(10, 18, 16, 0.98),
+            rgba(8, 14, 12, 0.99)
           );
 
           .ember-core path {
             opacity: 1;
             transform: scale(1.03);
-            fill: $accent-2;
-            filter: drop-shadow(0 18px 46px rgba(127, 231, 214, 0.08));
+            fill: rgba($accent-2, 1);
+            filter: drop-shadow(0 18px 46px rgba(60, 150, 210, 0.08));
           }
 
           .ember-sparks circle {
@@ -627,15 +628,12 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
             &:nth-child(1) {
               transform: translate(-4px, -6px) scale(1.4);
             }
-
             &:nth-child(2) {
               transform: translate(6px, -4px) scale(1.2);
             }
-
             &:nth-child(3) {
               transform: translate(4px, 6px) scale(1.1);
             }
-
             &:nth-child(4) {
               transform: translate(-6px, 4px) scale(1.15);
             }
@@ -649,7 +647,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         &:focus {
           outline: none;
           box-shadow: 0 28px 86px rgba(2, 10, 10, 0.6),
-            0 0 0 6px rgba(127, 231, 214, 0.06);
+            0 0 0 6px rgba(60, 150, 210, 0.05);
         }
 
         &.active {
@@ -659,7 +657,6 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           }
         }
 
-        /* 动画：浮动 / 核心呼吸 / 星尘上浮 */
         animation: iconFloat 8s ease-in-out infinite;
 
         .ember-core path {
@@ -673,7 +670,6 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         @media (max-width: 480px) {
           width: 44px;
           height: 44px;
-
           svg {
             width: 30px;
             height: 30px;
@@ -681,7 +677,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         }
       } /* .shouan-icon end */
 
-      /* ============ keyframes（今汐风命名） ============ */
+      /* ============ keyframes（保留） ============ */
       @keyframes iconFloat {
         0% {
           transform: translateY(0) scale(1);
@@ -701,17 +697,17 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
         0% {
           transform: scale(1);
           opacity: 0.9;
-          filter: drop-shadow(0 6px 18px rgba(127, 231, 214, 0.04));
+          filter: drop-shadow(0 6px 18px rgba(60, 150, 210, 0.04));
         }
         50% {
           transform: scale(1.04);
           opacity: 1;
-          filter: drop-shadow(0 18px 46px rgba(127, 231, 214, 0.08));
+          filter: drop-shadow(0 18px 46px rgba(60, 150, 210, 0.08));
         }
         100% {
           transform: scale(1);
           opacity: 0.9;
-          filter: drop-shadow(0 6px 18px rgba(127, 231, 214, 0.04));
+          filter: drop-shadow(0 6px 18px rgba(60, 150, 210, 0.04));
         }
       }
 
@@ -741,15 +737,15 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
       @keyframes corePulse {
         0% {
           transform: scale(1);
-          filter: drop-shadow(0 6px 18px rgba(127, 231, 214, 0.04));
+          filter: drop-shadow(0 6px 18px rgba(60, 150, 210, 0.04));
         }
         50% {
           transform: scale(1.06);
-          filter: drop-shadow(0 18px 46px rgba(127, 231, 214, 0.08));
+          filter: drop-shadow(0 18px 46px rgba(60, 150, 210, 0.08));
         }
         100% {
           transform: scale(1);
-          filter: drop-shadow(0 6px 18px rgba(127, 231, 214, 0.04));
+          filter: drop-shadow(0 6px 18px rgba(60, 150, 210, 0.04));
         }
       }
     } /* .message-meta end */
@@ -766,7 +762,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     }
   } /* .message-card end */
 
-  /* ---------- 固定底部输入区（今汐样式） ---------- */
+  /* ---------- 固定底部输入区（蓝橙柔和样式） ---------- */
   .message-form {
     position: fixed;
     left: 50%;
@@ -777,8 +773,8 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
 
     background: linear-gradient(
       180deg,
-      rgba(8, 20, 18, 0.9),
-      rgba(6, 16, 14, 0.94)
+      rgba(8, 18, 16, 0.9),
+      rgba(6, 14, 12, 0.94)
     );
     padding: 14px;
     border-radius: 14px;
@@ -787,14 +783,14 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     gap: 10px;
     box-shadow: 0 22px 64px rgba(3, 10, 10, 0.78), inset 0 1px 0 $inner-glow;
     z-index: 6;
-    border: 1px solid rgba(127, 231, 214, 0.02);
+    border: 1px solid rgba(60, 150, 210, 0.02);
     will-change: transform, opacity;
 
     input,
     textarea {
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(127, 231, 214, 0.03);
+      border: 1px solid rgba(60, 150, 210, 0.03);
       font-size: 14px;
       outline: none;
       transition: box-shadow 0.18s, border-color 0.18s, background 0.18s,
@@ -807,8 +803,6 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
       box-shadow: inset 0 -4px 10px rgba(0, 0, 0, 0.36);
       color: $text-main;
       resize: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
     }
 
     input::placeholder,
@@ -819,7 +813,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     input:focus,
     textarea:focus {
       border-color: $accent-1;
-      box-shadow: 0 10px 30px rgba(127, 231, 214, 0.06),
+      box-shadow: 0 10px 30px rgba(60, 150, 210, 0.06),
         inset 0 -6px 12px rgba(0, 0, 0, 0.32);
       background: linear-gradient(
         180deg,
@@ -852,25 +846,29 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           background: rgba(6, 14, 12, 0.78);
           border-radius: 6px;
           padding: 3px 7px;
-          border: 1px solid rgba(127, 231, 214, 0.02);
+          border: 1px solid rgba(60, 150, 210, 0.02);
           font-size: 12px;
           box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.28);
-          color: $accent-2;
+          color: rgba($accent-2, 0.95);
           font-weight: 700;
           letter-spacing: 0.6px;
         }
       }
 
-      /* 提交按钮：珍珠渐变 + 低调呼吸 */
+      /* 提交按钮：蓝→橙柔和渐变 + 低调呼吸 */
       button {
         padding: 10px 18px;
-        background: linear-gradient(180deg, $accent-1 0%, $accent-2 60%);
+        background: linear-gradient(
+          90deg,
+          $accent-1 0%,
+          rgba($accent-2, 0.9) 60%
+        );
         color: #042826; /* 深色文字以保证对比 */
         border: none;
         border-radius: 12px;
         cursor: pointer;
         font-weight: 800;
-        box-shadow: 0 12px 36px rgba(127, 231, 214, 0.06),
+        box-shadow: 0 12px 36px rgba(60, 150, 210, 0.06),
           inset 0 1px 0 rgba(255, 255, 255, 0.02);
         transition: transform 0.14s ease, box-shadow 0.14s ease,
           opacity 0.14s ease;
@@ -887,16 +885,16 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
           border-radius: 50%;
           background: radial-gradient(
             circle at 40% 40%,
-            $accent-2 0%,
+            rgba($accent-2, 0.95) 0%,
             $accent-1 40%,
             transparent 60%
           );
-          box-shadow: 0 6px 18px rgba(127, 231, 214, 0.06);
+          box-shadow: 0 6px 18px rgba(60, 150, 210, 0.06);
         }
 
         &:hover {
           transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 20px 56px rgba(127, 231, 214, 0.08);
+          box-shadow: 0 20px 56px rgba(60, 150, 210, 0.08);
         }
 
         &:active {
@@ -930,7 +928,7 @@ $pearl-glow: rgba(127, 231, 214, 0.06);
     }
     40% {
       transform: translateX(-50%) scale(1.01);
-      box-shadow: 0 28px 84px rgba(127, 231, 214, 0.08);
+      box-shadow: 0 28px 84px rgba(60, 150, 210, 0.08);
     }
     100% {
       transform: translateX(-50%) scale(1);
